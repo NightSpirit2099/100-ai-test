@@ -18,10 +18,12 @@ def test_validate_valid_config() -> None:
     config = load_config("system_config.yaml")
     validator = ConfigValidator(config)
     validator.validate()  # should not raise
+    assert config.version == "1.0"
 
 
 def test_validate_invalid_references() -> None:
     data = {
+        "version": "1.0",
         "llm_profiles": {"default": {"provider": "gemini", "model": "gemini-pro"}},
         "agents": {"researcher": {"description": "desc", "llm": "missing"}},
         "tasks": {
