@@ -78,7 +78,15 @@ class MetaOrchestrator:
         logger.debug("Estratégia selecionada: %s", strategy.__class__.__name__)
 
         logger.debug("Executando estratégia")
-        response = strategy.execute(request)
+        try:
+            response = strategy.execute(request)
+        except Exception as exc:  # pragma: no cover - logging tested separately
+            logger.error(
+                "Erro ao executar a estratégia %s: %s",
+                strategy.__class__.__name__,
+                exc,
+            )
+            raise
         logger.debug("Execução concluída: %s", response)
 
         logger.info("Processamento da requisição concluído")
