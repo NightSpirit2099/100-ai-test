@@ -1,3 +1,5 @@
+"""Orquestrador central que coordena múltiplas estratégias de execução."""
+
 import logging
 from typing import Dict
 
@@ -35,8 +37,13 @@ class MetaOrchestrator:
         A análise identifica a primeira estratégia com palavra-chave presente no
         texto. Caso nenhuma palavra-chave seja encontrada, a estratégia
         ``basic`` é utilizada como padrão.
-        """
 
+        Args:
+            request: Requisição enviada pelo usuário.
+
+        Returns:
+            Identificador da estratégia a ser utilizada.
+        """
         text = request.text.lower()
         for strategy, keywords in self.keyword_map.items():
             if any(keyword in text for keyword in keywords):
@@ -51,13 +58,10 @@ class MetaOrchestrator:
 
         Returns:
             Implementação de :class:`IExecutionStrategy` associada ao
-            identificador.
-
-        Raises:
-            ValueError: Se nenhuma estratégia corresponder ao identificador
-                informado.
+            identificador. Se nenhuma estratégia corresponder ao
+            identificador informado, a estratégia ``basic`` é utilizada e um
+            aviso é registrado no log.
         """
-
         try:
             return self.strategies[analysis]
         except KeyError:
@@ -65,7 +69,14 @@ class MetaOrchestrator:
             return self.strategies["basic"]
 
     def execute(self, request: UserRequest) -> AgentResponse:
-        """Processa a requisição do usuário e retorna a resposta do agente."""
+        """Processa a requisição do usuário e retorna a resposta do agente.
+
+        Args:
+            request: Requisição do usuário a ser processada.
+
+        Returns:
+            Resposta do agente gerada pela estratégia selecionada.
+        """
         logger.info("Iniciando processamento da requisição do usuário")
 
         logger.debug("Analisando a requisição")
