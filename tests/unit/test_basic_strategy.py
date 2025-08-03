@@ -17,4 +17,3 @@ def test_basic_strategy_execute_returns_expected_response(caplog: pytest.LogCapt
     assert isinstance(response, AgentResponse)
     assert response.text == "Processed: example"
     assert "Executando BasicStrategy" in caplog.text
-

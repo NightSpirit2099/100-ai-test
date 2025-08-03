@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from pydantic import ValidationError
+from pydantic_core import InitErrorDetails
 
 from config_models import SystemConfig
 
@@ -16,6 +17,40 @@ class ConfigValidator:
     def validate(self) -> None:
         """Validate configuration, raising ValidationError on issues."""
         errors: list[dict[str, Any]] = []
+
+        seen_agents: set[str] = set()
+        for agent_name in self._config.agents:
+            normalized = agent_name.lower()
+            if normalized in seen_agents:
+                msg = f"Duplicate agent entry '{agent_name}'"
+                errors.append(
+                    {
+                        "type": "value_error",
+                        "loc": ("agents", agent_name),
+                        "msg": msg,
+                        "input": agent_name,
+                        "ctx": {"error": msg},
+                    }
+                )
+            else:
+                seen_agents.add(normalized)
+
+        seen_tasks: set[str] = set()
+        for task_name in self._config.tasks:
+            normalized = task_name.lower()
+            if normalized in seen_tasks:
+                msg = f"Duplicate task entry '{task_name}'"
+                errors.append(
+                    {
+                        "type": "value_error",
+                        "loc": ("tasks", task_name),
+                        "msg": msg,
+                        "input": task_name,
+                        "ctx": {"error": msg},
+                    }
+                )
+            else:
+                seen_tasks.add(normalized)
 
         for agent_name, agent in self._config.agents.items():
             if agent.llm not in self._config.llm_profiles:
@@ -58,4 +93,6 @@ class ConfigValidator:
                     )
 
         if errors:
-            raise ValidationError.from_exception_data("SystemConfig", errors)
+            raise ValidationError.from_exception_data(
+                "SystemConfig", cast(list[InitErrorDetails], errors)
+            )

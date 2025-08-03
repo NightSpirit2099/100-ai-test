@@ -9,7 +9,7 @@ class LLMProfile(BaseModel):
     provider: str = Field(..., description="LLM service provider identifier")
     model: str = Field(..., description="Model name or identifier")
     temperature: float = Field(
-        0.0, ge=0.0, le=1.0, description="Sampling temperature for the model"
+        0.1, gt=0.0, le=1.0, description="Sampling temperature for the model"
     )
 
     model_config = {"extra": "forbid"}
