@@ -5,7 +5,7 @@ from ..core.interfaces import AgentResponse, IExecutionStrategy, UserRequest
 logger = logging.getLogger(__name__)
 
 
-class ResearchStrategy:
+class ResearchStrategy(IExecutionStrategy):
     """Estratégia que simula a pesquisa de informações."""
 
     def execute(self, request: UserRequest) -> AgentResponse:

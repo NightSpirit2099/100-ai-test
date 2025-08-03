@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 from pydantic import ValidationError
+from pydantic_core import InitErrorDetails
 
 from config_models import SystemConfig
 
@@ -58,4 +59,6 @@ class ConfigValidator:
                     )
 
         if errors:
-            raise ValidationError.from_exception_data("SystemConfig", errors)
+            raise ValidationError.from_exception_data(
+                "SystemConfig", cast(list[InitErrorDetails], errors)
+            )
