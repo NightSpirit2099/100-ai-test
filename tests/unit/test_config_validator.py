@@ -61,3 +61,41 @@ def test_validate_duplicate_entries() -> None:
     message = str(exc.value)
     assert "Duplicate agent entry" in message
     assert "Duplicate task entry" in message
+
+
+def test_validate_duplicate_llm_profiles() -> None:
+    data = {
+        "version": "1.0",
+        "llm_profiles": {
+            "default": {"provider": "gemini", "model": "gemini-pro"},
+            "Default": {"provider": "gemini", "model": "gemini-pro"},
+        },
+        "agents": {"researcher": {"description": "desc", "llm": "default"}},
+        "tasks": {"answer": {"description": "desc", "agent": "researcher"}},
+        "teams": {"default": {"agents": ["researcher"]}},
+    }
+    config = SystemConfig.from_dict(data)
+    validator = ConfigValidator(config)
+    with pytest.raises(ValidationError) as exc:
+        validator.validate()
+    message = str(exc.value)
+    assert "Duplicate llm profile entry" in message
+
+
+def test_validate_duplicate_teams() -> None:
+    data = {
+        "version": "1.0",
+        "llm_profiles": {"default": {"provider": "gemini", "model": "gemini-pro"}},
+        "agents": {"researcher": {"description": "desc", "llm": "default"}},
+        "tasks": {"answer": {"description": "desc", "agent": "researcher"}},
+        "teams": {
+            "default": {"agents": ["researcher"]},
+            "Default": {"agents": ["researcher"]},
+        },
+    }
+    config = SystemConfig.from_dict(data)
+    validator = ConfigValidator(config)
+    with pytest.raises(ValidationError) as exc:
+        validator.validate()
+    message = str(exc.value)
+    assert "Duplicate team entry" in message

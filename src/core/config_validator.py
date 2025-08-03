@@ -52,6 +52,40 @@ class ConfigValidator:
             else:
                 seen_tasks.add(normalized)
 
+        seen_profiles: set[str] = set()
+        for profile_name in self._config.llm_profiles:
+            normalized = profile_name.lower()
+            if normalized in seen_profiles:
+                msg = f"Duplicate llm profile entry '{profile_name}'"
+                errors.append(
+                    {
+                        "type": "value_error",
+                        "loc": ("llm_profiles", profile_name),
+                        "msg": msg,
+                        "input": profile_name,
+                        "ctx": {"error": msg},
+                    }
+                )
+            else:
+                seen_profiles.add(normalized)
+
+        seen_teams: set[str] = set()
+        for team_name in self._config.teams:
+            normalized = team_name.lower()
+            if normalized in seen_teams:
+                msg = f"Duplicate team entry '{team_name}'"
+                errors.append(
+                    {
+                        "type": "value_error",
+                        "loc": ("teams", team_name),
+                        "msg": msg,
+                        "input": team_name,
+                        "ctx": {"error": msg},
+                    }
+                )
+            else:
+                seen_teams.add(normalized)
+
         for agent_name, agent in self._config.agents.items():
             if agent.llm not in self._config.llm_profiles:
                 msg = f"Unknown llm profile '{agent.llm}' for agent '{agent_name}'"
