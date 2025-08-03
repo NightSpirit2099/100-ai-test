@@ -1,7 +1,7 @@
 import logging
 import pytest
 
-from src.core.interfaces import AgentResponse, UserRequest
+from src.core.interfaces import AgentResponse, IExecutionStrategy, UserRequest
 from src.core.meta_orchestrator import MetaOrchestrator
 from src.strategies.basic_strategy import BasicStrategy
 from src.strategies.research_strategy import ResearchStrategy
@@ -48,5 +48,30 @@ def test_select_strategy_unknown_returns_basic_and_logs_warning(
     assert any(
         record.levelno == logging.WARNING
         and "Estratégia desconhecida" in record.getMessage()
+        for record in caplog.records
+    )
+
+
+def test_execute_logs_and_reraises_on_strategy_error(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Verifica que erros da estratégia são registrados e propagados."""
+
+    class FailingStrategy(IExecutionStrategy):
+        def execute(self, request: UserRequest) -> AgentResponse:
+            raise RuntimeError("falha simulada")
+
+    orchestrator = MetaOrchestrator()
+    orchestrator.strategies["basic"] = FailingStrategy()
+    request = UserRequest(text="teste básico")
+
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(RuntimeError):
+            orchestrator.execute(request)
+
+    assert any(
+        record.levelno == logging.ERROR
+        and "FailingStrategy" in record.getMessage()
+        and "falha simulada" in record.getMessage()
         for record in caplog.records
     )
