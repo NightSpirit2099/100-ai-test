@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 class MetaOrchestrator:
-    """Orquestrador responsável por analisar requisições e delegar estratégias."""
+    """Orquestrador que analisa requisições e delega entre múltiplas estratégias."""
 
     def __init__(self) -> None:
         """Inicializa o orquestrador registrando as estratégias disponíveis."""

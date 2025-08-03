@@ -168,7 +168,7 @@ Formato:
 
 ```markdown
 ## [2025-08-03] Abstração Temporária - ChromaDB Direct Access
-**Localização**: `src/memory/simple_rag.py:45`
+**Localização**: `src/memory/rag_service.py:45`
 **Descrição**: Acesso direto ao ChromaDB sem interface
 **Refatoração Planejada**: Iteração 3 (migração para Neo4j)
 **Responsável**: @arquiteto_principal
