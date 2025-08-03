@@ -1,0 +1,17 @@
+llm_profiles:
+  default:
+    provider: gemini
+    model: gemini-pro
+    temperature: 0.7
+agents:
+  researcher:
+    description: "General knowledge assistant"
+    llm: default
+tasks:
+  answer_question:
+    description: "Answer user questions"
+    agent: researcher
+teams:
+  default:
+    agents:
+      - researcher
