@@ -32,6 +32,12 @@ def main(path: str) -> int:
         config = SystemConfig.from_dict(data)
         ConfigValidator(config).validate()
     except ValidationError as e:
+        for err in e.errors():
+            if err.get("loc") == ("version",) and err.get("type") == "string_pattern_mismatch":
+                logger.error(
+                    "Versão inválida '%s': esperado formato 'X.Y'", err.get("input")
+                )
+                return 1
         logger.error("Configuração inválida: %s", e)
         return 1
     except Exception as e:  # pragma: no cover - salvaguarda

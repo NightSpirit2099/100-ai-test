@@ -36,7 +36,9 @@ class Team(BaseModel):
 
 
 class SystemConfig(BaseModel):
-    version: str = Field(..., description="Configuration schema version")
+    version: str = Field(
+        ..., description="Configuration schema version", pattern=r"^\d+\.\d+$"
+    )
     llm_profiles: Dict[str, LLMProfile]
     agents: Dict[str, Agent]
     tasks: Dict[str, Task]
