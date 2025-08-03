@@ -17,7 +17,7 @@ Este projeto opera no **ambiente Codex do ChatGPT**, que tem características ú
 - **Segredos**: Configurados via interface do ChatGPT, não arquivos locais
 - **Variáveis de Ambiente**: Injetadas automaticamente no runtime
 - **Persistência**: Dados locais não persistem entre sessões
-- **Rede**: Acesso limitado a APIs específicas
+- **Rede**: Acesso ilimitado
 
 #### Implicações Arquiteturais
 
@@ -161,6 +161,7 @@ Sistema de Memória (RAG):
 1. **Documente decisões** - Atualize `TECH_DEBT_LOG.md` se necessário
 1. **Implemente incrementalmente** - Foque na funcionalidade mínima viável
 1. **Teste conforme desenvolve** - Inclua testes unitários básicos
+1. **teste estilo com flake8** - teste o estilo e formatação com flake8
 
 ### Após Implementar
 
