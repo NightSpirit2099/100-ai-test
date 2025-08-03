@@ -133,8 +133,7 @@ Meta-Orquestrador Core:
 - Próximo: aprimorar ``analyze_request`` para múltiplas estratégias
 
 ChromaDB Integration:
-- Status: 30% completo  
-- Arquivo: src/memory/simple_rag.py
+- Status: implementação inicial (stub)
 - Pendente: Pipeline de ingestão
 ```
 
@@ -216,7 +215,6 @@ DEFAULT_TIMEOUT = 30
 ```python
 # Sempre use imports absolutos
 from src.core.interfaces import IExecutionStrategy
-from src.memory.simple_rag import SimpleRAG
 
 # Evite imports circulares
 # Use typing.TYPE_CHECKING se necessário
