@@ -6,6 +6,84 @@ Guia para agentes de IA que contribuirão com o desenvolvimento do **Agente Pess
 
 -----
 
+## 🚨 CONTEXTO OPERACIONAL - AMBIENTE CODEX
+
+### Especificidades do ChatGPT Codex
+
+Este projeto opera no **ambiente Codex do ChatGPT**, que tem características únicas:
+
+#### Gestão de Segredos e Variáveis
+
+- **Segredos**: Configurados via interface do ChatGPT, não arquivos locais
+- **Variáveis de Ambiente**: Injetadas automaticamente no runtime
+- **Persistência**: Dados locais não persistem entre sessões
+- **Rede**: Acesso limitado a APIs específicas
+
+#### Implicações Arquiteturais
+
+```python
+# ✅ PADRÃO CODEX: Verificação defensiva de variáveis
+def get_api_key(key_name: str) -> str:
+    key = os.getenv(key_name)
+    if not key:
+        raise EnvironmentError(f"Variável {key_name} não configurada no ambiente Codex")
+    return key
+
+# ✅ PADRÃO CODEX: Graceful degradation
+def initialize_llm():
+    try:
+        api_key = get_api_key('GEMINI_API_KEY')
+        return GeminiLLM(api_key=api_key)
+    except EnvironmentError as e:
+        logger.warning(f"LLM indisponível: {e}")
+        return MockLLM()  # Fallback para desenvolvimento
+```
+
+#### Persistência de Dados
+
+```python
+# ✅ PADRÃO CODEX: Dados efêmeros
+class EphemeralStorage:
+    """Storage que aceita perda de dados entre sessões"""
+    def __init__(self):
+        self._data = {}  # Em memória apenas
+        
+    def store(self, key: str, value: Any):
+        logger.info(f"Storing {key} (ephemeral)")
+        self._data[key] = value
+    
+    def retrieve(self, key: str) -> Optional[Any]:
+        return self._data.get(key)
+
+# ❌ EVITAR: Assumir persistência de arquivos
+# with open('persistent_data.json', 'w') as f:  # Pode não persistir
+```
+
+### Testes no Ambiente Codex
+
+```python
+# ✅ PADRÃO CODEX: Testes que não dependem de estado externo
+def test_meta_orchestrator():
+    # Usar mocks para dependências externas
+    mock_strategy = MockStrategy()
+    orchestrator = MetaOrchestrator(strategies={'mock': mock_strategy})
+    
+    # Teste self-contained
+    result = orchestrator.execute(UserRequest(text="test"))
+    assert isinstance(result, AgentResponse)
+
+# ✅ PADRÃO CODEX: Validação de configuração sem segredos reais
+def test_config_validation():
+    mock_config = {
+        'llm': {'provider': 'gemini', 'model': 'gemini-pro'},
+        'memory': {'type': 'vector', 'provider': 'chromadb'}
+    }
+    validator = ConfigValidator()
+    assert validator.validate(mock_config).is_valid
+```
+
+-----
+
 ## 🎯 CONTEXTO DO PROJETO
 
 ### O Que Estamos Construindo
@@ -492,7 +570,7 @@ class NovaStrategy(IExecutionStrategy):
 
 - `system_config.yaml` - Configuração central do sistema
 - `requirements.txt` - Dependências Python
-- `.env.example` - Template para variáveis de ambiente
+- **Ambiente Codex** - Variáveis de ambiente geridas pelo ChatGPT
 
 ### Scripts Úteis
 
