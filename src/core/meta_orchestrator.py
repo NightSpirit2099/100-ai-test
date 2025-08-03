@@ -11,26 +11,36 @@ logger = logging.getLogger(__name__)
 class MetaOrchestrator:
     """Orquestrador que analisa requisições e delega entre múltiplas estratégias."""
 
-    def __init__(self) -> None:
-        """Inicializa o orquestrador registrando as estratégias disponíveis."""
+    def __init__(self, keyword_map: Dict[str, tuple[str, ...]] | None = None) -> None:
+        """Inicializa o orquestrador com estratégias e mapa de palavras-chave.
+
+        Args:
+            keyword_map: Mapeamento configurável de identificadores de estratégia
+                para tuplas de palavras-chave. Se não fornecido, um conjunto
+                padrão é utilizado.
+        """
+
         self.strategies: Dict[str, IExecutionStrategy] = {
             "basic": BasicStrategy(),
             "research": ResearchStrategy(),
+        }
+        self.keyword_map: Dict[str, tuple[str, ...]] = keyword_map or {
+            "research": ("research", "pesquisa"),
+            "basic": ("basic",),
         }
 
     def analyze_request(self, request: UserRequest) -> str:
         """Analisa a requisição do usuário para determinar a estratégia.
 
-        A análise mínima identifica palavras-chave simples no texto da
-        requisição. Caso nenhuma palavra-chave seja encontrada, a estratégia
+        A análise identifica a primeira estratégia com palavra-chave presente no
+        texto. Caso nenhuma palavra-chave seja encontrada, a estratégia
         ``basic`` é utilizada como padrão.
         """
 
         text = request.text.lower()
-        if any(keyword in text for keyword in ("research", "pesquisa")):
-            return "research"
-        if "basic" in text:
-            return "basic"
+        for strategy, keywords in self.keyword_map.items():
+            if any(keyword in text for keyword in keywords):
+                return strategy
         return "basic"
 
     def select_strategy(self, analysis: str) -> IExecutionStrategy:

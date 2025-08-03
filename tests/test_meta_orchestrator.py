@@ -33,3 +33,19 @@ def test_meta_orchestrator_research_strategy() -> None:
     assert isinstance(response, AgentResponse)
     assert "Researching" in response.text
 
+
+def test_meta_orchestrator_custom_keyword() -> None:
+    keyword_map = {"research": ("investigate", "analysis"), "basic": ("basic",)}
+    orchestrator = MetaOrchestrator(keyword_map=keyword_map)
+    request = UserRequest(text="please investigate new trends")
+
+    analysis = orchestrator.analyze_request(request)
+    assert analysis == "research"
+
+    strategy = orchestrator.select_strategy(analysis)
+    assert isinstance(strategy, ResearchStrategy)
+
+    response = orchestrator.execute(request)
+    assert isinstance(response, AgentResponse)
+    assert "Researching" in response.text
+
