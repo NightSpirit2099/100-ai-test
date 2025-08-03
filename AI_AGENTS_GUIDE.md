@@ -115,8 +115,8 @@ Um assistente pessoal baseado em IA que atua como uma equipe de agentes especial
 [Atualizar conforme progresso]
 
 Estrutura Base:
-- src/core/ - Meta-Orquestrador (esqueleto)
-- src/strategies/ - Interface IExecutionStrategy
+- src/core/ - Meta-Orquestrador com análise básica
+- src/strategies/ - BasicStrategy como implementação padrão
 - system_config.yaml - Template de configuração
 - requirements.txt - Dependências base
 - CI/CD pipeline - Validação automática
@@ -128,9 +128,9 @@ Estrutura Base:
 [Atualizar diariamente]
 
 Meta-Orquestrador Core:
-- Status: 60% completo
+- Status: Implementação mínima concluída
 - Arquivo: src/core/meta_orchestrator.py
-- Pendente: analyze_request() e select_strategy()
+- Próximo: aprimorar ``analyze_request`` para múltiplas estratégias
 
 ChromaDB Integration:
 - Status: 30% completo  
@@ -375,17 +375,32 @@ class ArchivistAgent:
 
 ```python
 # Localização: src/core/meta_orchestrator.py
-# Status: Interface definida, implementação 60%
-# Próximo: Completar analyze_request() e strategy selection
+# Status: Implementação básica concluída
+# Próximo: Ampliar análise para múltiplas estratégias
 
 class MetaOrchestrator:
-    def analyze_request(self, request: UserRequest) -> RequestAnalysis:
-        # TODO: Implementar análise de intenção
-        pass
-    
-    def select_strategy(self, analysis: RequestAnalysis) -> IExecutionStrategy:
-        # TODO: Lógica de seleção de estratégia
-        pass
+    def analyze_request(self, request: UserRequest) -> str:
+        """Analisa o texto em busca de palavras-chave simples.
+
+        Retorna "basic" como estratégia padrão.
+        """
+
+        text = request.text.lower()
+        if "basic" in text:
+            return "basic"
+        return "basic"
+
+    def select_strategy(self, analysis: str) -> IExecutionStrategy:
+        """Recupera a estratégia registrada pelo identificador.
+
+        Lança ``ValueError`` se nenhuma estratégia corresponder ao
+        identificador informado.
+        """
+
+        try:
+            return self.strategies[analysis]
+        except KeyError as exc:
+            raise ValueError(f"Estratégia desconhecida: {analysis}") from exc
 ```
 
 ### System Config
@@ -447,8 +462,8 @@ class AgentResponse(BaseModel):
 ```
 [Consulte TECH_DEBT_LOG.md para lista completa]
 
-1. ChromaDB ainda não tem pipeline de ingestão completa
-2. Validação de system_config.yaml não implementada
+1. ChromaDB ainda não tem pipeline de ingestão completo
+2. Validação de system_config.yaml limitada (regras adicionais pendentes)
 3. Logging infrastructure básica pendente
 4. Testes de integração end-to-end faltando
 ```
@@ -460,12 +475,12 @@ class AgentResponse(BaseModel):
 ### MVP - Funcionalidade Mínima
 
 ```
-Usuário: "O que discutimos na reunião de ontem?"
-Sistema: 
+Usuário: "Teste básico"
+Sistema:
 1. Meta-Orquestrador analisa pedido
-2. Seleciona SimpleRAG strategy
-3. ArchivistAgent busca na memória
-4. Retorna resposta via Telegram
+2. Seleciona BasicStrategy
+3. BasicStrategy retorna resposta padrão
+4. Resposta entregue ao usuário
 ```
 
 ### Iteração 1 - Multi-Agentes
@@ -574,13 +589,12 @@ class NovaStrategy(IExecutionStrategy):
 
 ### Scripts Úteis
 
-- `scripts/validate_config.py` - Validação de configuração
-- `scripts/run_tests.py` - Execução de testes
-- `scripts/setup_dev.py` - Setup do ambiente de desenvolvimento
+- `validate_config.py` - Validação de configuração
+- `python -m pytest` - Execução de testes
 
 -----
 
-**Última Atualização**: [Manter sempre atual]  
+**Última Atualização**: 2025-08-03
 **Próxima Revisão**: [Após cada implementação significativa]
 
 -----
