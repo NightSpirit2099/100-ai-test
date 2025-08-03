@@ -1,11 +1,11 @@
-import logging
 from typing import Dict
 
 from ..strategies.basic_strategy import BasicStrategy
 from ..strategies.research_strategy import ResearchStrategy
 from .interfaces import AgentResponse, IExecutionStrategy, UserRequest
+from ..utils.logging import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class MetaOrchestrator:

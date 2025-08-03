@@ -1,4 +1,3 @@
-import logging
 import sys
 
 import yaml
@@ -6,13 +5,9 @@ from pydantic import ValidationError
 
 from config_models import SystemConfig
 from src.core.config_validator import ConfigValidator
+from src.utils.logging import get_logger
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(levelname)s: %(message)s",
-    stream=sys.stdout,
-)
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 def main(path: str) -> int:
