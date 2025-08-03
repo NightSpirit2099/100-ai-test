@@ -7,19 +7,29 @@ from pydantic import ValidationError
 from config_models import SystemConfig
 from src.core.config_validator import ConfigValidator
 
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
 def main(path: str) -> int:
-    with open(path, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+    except FileNotFoundError:
+        logger.error("Arquivo não encontrado: %s", path)
+        return 1
+    except yaml.YAMLError as e:
+        logger.error("Erro ao ler YAML: %s", e)
+        return 1
+
     try:
         config = SystemConfig.from_dict(data)
         ConfigValidator(config).validate()
     except ValidationError as e:
-        logger.error("Config inválido: %s", e)
+        logger.error("Configuração inválida: %s", e)
         return 1
-    logger.info("Config válido!")
+
+    logger.info("Configuração validada com sucesso.")
     return 0
 
 
