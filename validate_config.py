@@ -7,11 +7,17 @@ from pydantic import ValidationError
 from config_models import SystemConfig
 from src.core.config_validator import ConfigValidator
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s: %(message)s",
+    stream=sys.stdout,
+)
 logger = logging.getLogger(__name__)
 
 
 def main(path: str) -> int:
+    logger.info("Validando arquivo de configuração: %s", path)
+
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
@@ -27,6 +33,9 @@ def main(path: str) -> int:
         ConfigValidator(config).validate()
     except ValidationError as e:
         logger.error("Configuração inválida: %s", e)
+        return 1
+    except Exception as e:  # pragma: no cover - salvaguarda
+        logger.error("Falha inesperada na validação: %s", e)
         return 1
 
     logger.info("Configuração validada com sucesso.")
