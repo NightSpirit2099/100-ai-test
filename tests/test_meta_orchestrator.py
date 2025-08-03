@@ -1,3 +1,5 @@
+import logging
+
 from src.core.interfaces import AgentResponse, UserRequest
 from src.core.meta_orchestrator import MetaOrchestrator
 from src.strategies.basic_strategy import BasicStrategy
@@ -32,4 +34,14 @@ def test_meta_orchestrator_research_strategy() -> None:
     response = orchestrator.execute(request)
     assert isinstance(response, AgentResponse)
     assert "Researching" in response.text
+
+
+def test_select_strategy_unknown_defaults_to_basic(caplog) -> None:
+    orchestrator = MetaOrchestrator()
+
+    with caplog.at_level(logging.WARNING, logger="src.core.meta_orchestrator"):
+        strategy = orchestrator.select_strategy("unknown")
+
+    assert "Estratégia desconhecida" in caplog.text
+    assert isinstance(strategy, BasicStrategy)
 
