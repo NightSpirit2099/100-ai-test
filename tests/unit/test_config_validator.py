@@ -38,3 +38,26 @@ def test_validate_invalid_references() -> None:
     message = str(exc.value)
     assert "missing" in message
     assert "ghost" in message
+
+
+def test_validate_duplicate_entries() -> None:
+    data = {
+        "version": "1.0",
+        "llm_profiles": {"default": {"provider": "gemini", "model": "gemini-pro"}},
+        "agents": {
+            "researcher": {"description": "desc", "llm": "default"},
+            "Researcher": {"description": "desc", "llm": "default"},
+        },
+        "tasks": {
+            "answer": {"description": "desc", "agent": "researcher"},
+            "Answer": {"description": "desc", "agent": "researcher"},
+        },
+        "teams": {"default": {"agents": ["researcher"]}},
+    }
+    config = SystemConfig.from_dict(data)
+    validator = ConfigValidator(config)
+    with pytest.raises(ValidationError) as exc:
+        validator.validate()
+    message = str(exc.value)
+    assert "Duplicate agent entry" in message
+    assert "Duplicate task entry" in message
