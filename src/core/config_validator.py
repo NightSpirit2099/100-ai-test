@@ -18,6 +18,40 @@ class ConfigValidator:
         """Validate configuration, raising ValidationError on issues."""
         errors: list[dict[str, Any]] = []
 
+        seen_agents: set[str] = set()
+        for agent_name in self._config.agents:
+            normalized = agent_name.lower()
+            if normalized in seen_agents:
+                msg = f"Duplicate agent entry '{agent_name}'"
+                errors.append(
+                    {
+                        "type": "value_error",
+                        "loc": ("agents", agent_name),
+                        "msg": msg,
+                        "input": agent_name,
+                        "ctx": {"error": msg},
+                    }
+                )
+            else:
+                seen_agents.add(normalized)
+
+        seen_tasks: set[str] = set()
+        for task_name in self._config.tasks:
+            normalized = task_name.lower()
+            if normalized in seen_tasks:
+                msg = f"Duplicate task entry '{task_name}'"
+                errors.append(
+                    {
+                        "type": "value_error",
+                        "loc": ("tasks", task_name),
+                        "msg": msg,
+                        "input": task_name,
+                        "ctx": {"error": msg},
+                    }
+                )
+            else:
+                seen_tasks.add(normalized)
+
         for agent_name, agent in self._config.agents.items():
             if agent.llm not in self._config.llm_profiles:
                 msg = f"Unknown llm profile '{agent.llm}' for agent '{agent_name}'"
