@@ -12,19 +12,27 @@ class LLMProfile(BaseModel):
         0.0, ge=0.0, le=1.0, description="Sampling temperature for the model"
     )
 
+    model_config = {"extra": "forbid"}
+
 
 class Agent(BaseModel):
     description: str = Field(..., description="Short description of the agent's purpose")
     llm: str = Field(..., description="Key of the LLM profile used by this agent")
+
+    model_config = {"extra": "forbid"}
 
 
 class Task(BaseModel):
     description: str = Field(..., description="Description of what the task does")
     agent: str = Field(..., description="Name of the agent responsible for the task")
 
+    model_config = {"extra": "forbid"}
+
 
 class Team(BaseModel):
     agents: List[str] = Field(..., description="List of agent names that compose the team")
+
+    model_config = {"extra": "forbid"}
 
 
 class SystemConfig(BaseModel):
@@ -32,6 +40,8 @@ class SystemConfig(BaseModel):
     agents: Dict[str, Agent]
     tasks: Dict[str, Task]
     teams: Dict[str, Team]
+
+    model_config = {"extra": "forbid"}
 
     @classmethod
     def from_dict(cls, data: Dict) -> "SystemConfig":
