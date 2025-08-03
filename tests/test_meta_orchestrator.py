@@ -5,7 +5,8 @@ from src.strategies.research_strategy import ResearchStrategy
 
 
 def test_meta_orchestrator_basic_strategy() -> None:
-    orchestrator = MetaOrchestrator()
+    strategies = {"basic": BasicStrategy()}
+    orchestrator = MetaOrchestrator(strategies=strategies)
     request = UserRequest(text="teste básico")
 
     analysis = orchestrator.analyze_request(request)
@@ -20,7 +21,8 @@ def test_meta_orchestrator_basic_strategy() -> None:
 
 
 def test_meta_orchestrator_research_strategy() -> None:
-    orchestrator = MetaOrchestrator()
+    strategies = {"research": ResearchStrategy()}
+    orchestrator = MetaOrchestrator(strategies=strategies)
     request = UserRequest(text="please research about AI")
 
     analysis = orchestrator.analyze_request(request)

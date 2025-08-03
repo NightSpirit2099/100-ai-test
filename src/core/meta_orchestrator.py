@@ -1,5 +1,4 @@
 import logging
-from typing import Dict
 
 from ..strategies.basic_strategy import BasicStrategy
 from ..strategies.research_strategy import ResearchStrategy
@@ -11,12 +10,20 @@ logger = logging.getLogger(__name__)
 class MetaOrchestrator:
     """Orquestrador que analisa requisições e delega entre múltiplas estratégias."""
 
-    def __init__(self) -> None:
-        """Inicializa o orquestrador registrando as estratégias disponíveis."""
-        self.strategies: Dict[str, IExecutionStrategy] = {
-            "basic": BasicStrategy(),
-            "research": ResearchStrategy(),
-        }
+    def __init__(self, strategies: dict[str, IExecutionStrategy] | None = None) -> None:
+        """Inicializa o orquestrador registrando as estratégias disponíveis.
+
+        Args:
+            strategies: Mapeamento de identificadores para instâncias de
+                :class:`IExecutionStrategy`. Quando ``None``, o orquestrador
+                registra as estratégias padrão.
+        """
+        if strategies is None:
+            strategies = {
+                "basic": BasicStrategy(),
+                "research": ResearchStrategy(),
+            }
+        self.strategies = strategies
 
     def analyze_request(self, request: UserRequest) -> str:
         """Analisa a requisição do usuário para determinar a estratégia.
