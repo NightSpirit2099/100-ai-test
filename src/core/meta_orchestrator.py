@@ -2,22 +2,20 @@ import logging
 from typing import Dict
 
 from ..strategies.basic_strategy import BasicStrategy
+from ..strategies.research_strategy import ResearchStrategy
 from .interfaces import AgentResponse, IExecutionStrategy, UserRequest
 
 logger = logging.getLogger(__name__)
 
 
 class MetaOrchestrator:
-    """Orquestrador responsável por analisar requisições e delegar estratégias.
-
-    Atualmente registra apenas :class:`BasicStrategy`,
-    utilizada como estratégia padrão para qualquer requisição recebida.
-    """
+    """Orquestrador responsável por analisar requisições e delegar estratégias."""
 
     def __init__(self) -> None:
         """Inicializa o orquestrador registrando as estratégias disponíveis."""
         self.strategies: Dict[str, IExecutionStrategy] = {
             "basic": BasicStrategy(),
+            "research": ResearchStrategy(),
         }
 
     def analyze_request(self, request: UserRequest) -> str:
@@ -29,6 +27,8 @@ class MetaOrchestrator:
         """
 
         text = request.text.lower()
+        if any(keyword in text for keyword in ("research", "pesquisa")):
+            return "research"
         if "basic" in text:
             return "basic"
         return "basic"
@@ -50,8 +50,9 @@ class MetaOrchestrator:
 
         try:
             return self.strategies[analysis]
-        except KeyError as exc:  # pragma: no cover - defensive branch
-            raise ValueError(f"Estratégia desconhecida: {analysis}") from exc
+        except KeyError:
+            logger.warning("Estratégia desconhecida: %s. Utilizando 'basic'.", analysis)
+            return self.strategies["basic"]
 
     def execute(self, request: UserRequest) -> AgentResponse:
         """Processa a requisição do usuário e retorna a resposta do agente."""
