@@ -1,10 +1,12 @@
 import logging
+from typing import final
 
-from ..core.interfaces import AgentResponse, IExecutionStrategy, UserRequest
+from ..core.interfaces import AgentResponse, UserRequest
 
 logger = logging.getLogger(__name__)
 
 
+@final
 class BasicStrategy:
     """Estratégia simples de execução.
 
