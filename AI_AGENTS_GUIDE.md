@@ -584,10 +584,12 @@ class NovaStrategy(IExecutionStrategy):
 
 ### Scripts Úteis
 
-- `validate_config.py` - Valida arquivos de configuração YAML. Execute
-  `python validate_config.py system_config.yaml` para checar o arquivo. O
-  script escreve no console `INFO: Configuração validada com sucesso.` quando
+- `scripts/validate_config.py` - Valida arquivos de configuração YAML. Execute
+  `python scripts/validate_config.py system_config.yaml` para checar o arquivo.
+  O script escreve no console `INFO: Configuração validada com sucesso.` quando
   tudo estiver correto ou `ERROR: ...` detalhando qualquer problema.
+- `scripts/validate_interfaces.py` - Verifica se todas as classes em
+  `src/strategies` implementam `IExecutionStrategy`.
 - `python -m pytest` - Execução de testes
 
 -----
