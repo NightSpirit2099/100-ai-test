@@ -13,31 +13,21 @@ logger = logging.getLogger(__name__)
 
 
 class SimpleRAG:
-    """Placeholder RAG implementation.
-
-    Methods defined here outline the expected API for the memory subsystem.
-    Concrete functionality will be added incrementally as integrations are
-    completed.
-    """
+    """In-memory placeholder for a RAG implementation."""
 
     def __init__(self) -> None:
-        """Initialize the RAG system.
-
-        Future versions may configure connections to vector stores
-        and graph databases during initialization.
-        """
-        logger.debug("SimpleRAG initialized (stub)")
+        """Initialize the RAG system."""
+        self._docs: List[str] = []
+        logger.debug("SimpleRAG initialized")
 
     def add_documents(self, texts: List[str]) -> None:
         """Ingest a batch of documents into the memory store.
 
         Args:
             texts: Raw text documents to embed and persist.
-
-        Raises:
-            NotImplementedError: This method is a stub.
         """
-        raise NotImplementedError("Document ingestion not implemented yet")
+        self._docs.extend(texts)
+        logger.info("Added %d documents", len(texts))
 
     def query(self, question: str, top_k: int = 5) -> List[str]:
         """Retrieve relevant documents for a given question.
@@ -47,9 +37,8 @@ class SimpleRAG:
             top_k: Number of results to return.
 
         Returns:
-            Placeholder list of document snippets.
-
-        Raises:
-            NotImplementedError: This method is a stub.
+            List of document snippets containing the query.
         """
-        raise NotImplementedError("Query mechanism not implemented yet")
+        lowered = question.lower()
+        matches = [doc for doc in self._docs if lowered in doc.lower()]
+        return matches[:top_k]

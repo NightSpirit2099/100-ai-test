@@ -34,4 +34,3 @@ def test_meta_orchestrator_research_strategy() -> None:
     response = orchestrator.execute(request)
     assert isinstance(response, AgentResponse)
     assert "Researching" in response.text
-
