@@ -8,7 +8,7 @@ import yaml
 from pydantic import ValidationError
 
 from config_models import SystemConfig
-from validate_config import main as validate_main
+from scripts.validate_config import main as validate_main
 
 
 def _load_base_config() -> dict:
