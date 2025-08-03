@@ -22,4 +22,3 @@ MODULES: List[str] = [
 def test_import_module(module_name: str) -> None:
     """Import a module by name to verify it loads correctly."""
     importlib.import_module(module_name)
-

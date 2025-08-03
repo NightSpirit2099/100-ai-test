@@ -8,7 +8,7 @@ import yaml
 from pydantic import ValidationError
 
 from config_models import SystemConfig
-from validate_config import main as validate_main
+from scripts.validate_config import main as validate_main
 
 
 def _load_base_config() -> dict:
@@ -30,7 +30,9 @@ def test_system_config_rejects_invalid_version() -> None:
         SystemConfig.from_dict(data)
 
 
-def test_validate_config_reports_invalid_version(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+def test_validate_config_reports_invalid_version(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
     data = _load_base_config()
     data["version"] = "2"
     cfg_path = tmp_path / "config.yaml"

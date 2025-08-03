@@ -1,1 +1,1 @@
-
+"""Strategy implementations package."""
