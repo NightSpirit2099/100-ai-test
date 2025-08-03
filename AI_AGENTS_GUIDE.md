@@ -154,6 +154,143 @@ from src.core.models import UserRequest, AgentResponse
 
 -----
 
+## 📐 PRINCÍPIOS DE DESIGN FUNDAMENTAIS
+
+### Filosofias Fundamentais
+
+Antes de implementar, todo agente deve internalizar estes princípios:
+
+#### KISS (Keep It Simple, Stupid)
+
+- **Aplicação no Projeto**: Prefira soluções diretas sobre “cleverness”
+- **Exemplo Prático**: Use `if/else` simples em vez de patterns complexos quando apropriado
+- **Red Flag**: Se precisa explicar por mais de 2 minutos, provavelmente não é KISS
+
+#### DRY (Don’t Repeat Yourself)
+
+- **Aplicação no Projeto**: Um conceito = uma representação autoritativa
+- **Exemplo Prático**: Regras de validação do `system_config.yaml` em um só lugar
+- **Red Flag**: Mudança de regra de negócio requer alterações em 3+ lugares
+
+#### YAGNI (You Ain’t Gonna Need It)
+
+- **Aplicação no Projeto**: Implemente apenas para requisitos atuais explícitos
+- **Exemplo Prático**: Não crie interfaces “para o futuro” no MVP
+- **Red Flag**: Código justificado com “talvez precisemos depois”
+
+### Princípios SOLID
+
+Nossa arquitetura segue rigorosamente os princípios SOLID:
+
+#### SRP (Single Responsibility Principle)
+
+```python
+# ✅ BOM: Uma responsabilidade clara
+class ConfigValidator:
+    def validate_yaml(self, config: Dict) -> ValidationResult:
+        # Única responsabilidade: validar configuração
+        pass
+
+# ❌ RUIM: Múltiplas responsabilidades  
+class ConfigManagerProcessor:
+    def validate_yaml(self, config: Dict): pass
+    def load_from_file(self, path: str): pass
+    def send_email_notification(self): pass  # 🚨 Responsabilidade extra
+```
+
+#### OCP (Open/Closed Principle)
+
+```python
+# ✅ Nossa arquitetura Strategy permite extensão sem modificação
+class MetaOrchestrator:
+    def execute(self, request: UserRequest) -> AgentResponse:
+        strategy = self.select_strategy(request)
+        return strategy.execute(request)  # Extensível via novas Strategies
+
+# Adicionar nova Strategy não requer modificar MetaOrchestrator
+class NewCustomStrategy(IExecutionStrategy):
+    def execute(self, request: UserRequest) -> AgentResponse:
+        # Nova funcionalidade sem quebrar código existente
+        pass
+```
+
+#### LSP (Liskov Substitution Principle)
+
+```python
+# ✅ Qualquer IExecutionStrategy deve ser substituível
+def process_request(strategy: IExecutionStrategy, request: UserRequest):
+    # Deve funcionar com CrewAIStrategy, LangChainStrategy, etc.
+    result = strategy.execute(request)
+    assert isinstance(result, AgentResponse)  # Contrato respeitado
+```
+
+#### ISP (Interface Segregation Principle)
+
+```python
+# ✅ Interfaces focadas em papéis específicos
+class IMemoryRetriever(Protocol):
+    def search(self, query: str) -> List[Document]: ...
+
+class IMemoryStorer(Protocol):
+    def store(self, document: Document) -> str: ...
+
+# Agentes implementam apenas interfaces relevantes
+class ArchivistAgent(IMemoryRetriever):  # Só busca, não armazena
+    def search(self, query: str) -> List[Document]: ...
+```
+
+#### DIP (Dependency Inversion Principle)
+
+```python
+# ✅ Depende de abstrações, não de implementações concretas
+class ArchivistAgent:
+    def __init__(self, memory: IMemoryRetriever):  # Abstração
+        self.memory = memory  # Não depende de ChromaDB diretamente
+    
+    def search_knowledge(self, query: str):
+        return self.memory.search(query)  # Funciona com qualquer implementação
+```
+
+### Diretrizes de Aplicação
+
+#### Para MVP (Prioridade Alta)
+
+1. **KISS dominante**: Solução mais simples que funciona
+1. **SRP rigoroso**: Cada classe uma responsabilidade clara
+1. **DIP básico**: Interfaces para componentes que mudarão (LLM, Memory)
+
+#### Para Iterações Futuras (Prioridade Média)
+
+1. **OCP**: Preparar extensibilidade quando padrões emergirem
+1. **ISP**: Segregar interfaces quando crescerem muito
+1. **DRY avançado**: Abstrair quando duplicação se tornar dolorosa
+
+#### Sinais de Alerta
+
+- **Violação KISS**: Explaining código por >5 minutos
+- **Violação SRP**: Classe com >3 razões para mudar
+- **Violação OCP**: Modificar código existente para nova feature
+- **Violação LSP**: `isinstance()` checks no código cliente
+- **Violação ISP**: Implementações vazias ou `NotImplementedError`
+- **Violação DIP**: Imports diretos de classes concretas em lógica de negócio
+
+### Decisões Arquiteturais Baseadas nos Princípios
+
+#### Por que Meta-Orquestrador (OCP + SRP)
+
+- **OCP**: Extensível com novas strategies sem modificação
+- **SRP**: Única responsabilidade é orquestrar, não executar
+
+#### Por que Interfaces Separadas (ISP + DIP)
+
+- **ISP**: `IExecutionStrategy`, `IMemoryRetriever` focadas
+- **DIP**: Componentes dependem de contratos, não implementações
+
+#### Por que Configuração Externa (YAGNI + DRY)
+
+- **YAGNI**: Apenas configurações que realmente precisamos
+- **DRY**: Uma fonte de verdade para comportamento do sistema
+
 ## 🔧 COMPONENTES CRÍTICOS
 
 ### Meta-Orquestrador
