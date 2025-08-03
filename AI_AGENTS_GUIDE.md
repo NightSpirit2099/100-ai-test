@@ -92,7 +92,7 @@ Um assistente pessoal baseado em IA que atua como uma equipe de agentes especial
 
 ### Arquitetura Central
 
-- **Meta-Orquestrador**: Núcleo que seleciona estratégias de execução
+- **Meta-Orquestrador**: Núcleo que seleciona e delega múltiplas estratégias de execução
 - **Padrão Strategy**: Permite múltiplos frameworks de orquestração
 - **RAG Híbrido**: Memória de longo prazo (ChromaDB → Neo4j)
 - **LLMs Híbridos**: Local (Ollama) + Nuvem (Gemini)
@@ -112,11 +112,9 @@ Um assistente pessoal baseado em IA que atua como uma equipe de agentes especial
 ### ✅ Implementado
 
 ```
-[Atualizar conforme progresso]
-
 Estrutura Base:
-- src/core/ - Meta-Orquestrador com análise básica
-- src/strategies/ - BasicStrategy como implementação padrão
+- src/core/ - Meta-Orquestrador com suporte a múltiplas estratégias (BasicStrategy e ResearchStrategy)
+- src/strategies/ - Implementações de BasicStrategy e ResearchStrategy
 - system_config.yaml - Template de configuração
 - requirements.txt - Dependências base
 - CI/CD pipeline - Validação automática
@@ -125,16 +123,14 @@ Estrutura Base:
 ### 🔄 Em Desenvolvimento
 
 ```
-[Atualizar diariamente]
-
 Meta-Orquestrador Core:
-- Status: Implementação mínima concluída
+- Status: Suporte inicial a múltiplas estratégias concluído
 - Arquivo: src/core/meta_orchestrator.py
-- Próximo: aprimorar ``analyze_request`` para múltiplas estratégias
+- Próximo: aprimorar heurística de análise e incluir novas estratégias
 
-ChromaDB Integration:
-- Status: implementação inicial (stub)
-- Pendente: Pipeline de ingestão
+Sistema de Memória (RAG):
+- Status: Stub inicial definido
+- Pendente: Pipeline de ingestão e integração com ChromaDB
 ```
 
 ### ⏳ Próximo na Fila
