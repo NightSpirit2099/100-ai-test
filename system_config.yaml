@@ -16,3 +16,15 @@ teams:
   default:
     agents:
       - researcher
+keyword_map:
+  research:
+    - pesquisa
+    - investigacion
+    - investigación
+    - recherche
+    - ricerca
+  basic:
+    - basico
+    - básico
+    - basique
+    - semplice

@@ -41,6 +41,10 @@ class SystemConfig(BaseModel):
     agents: Dict[str, Agent]
     tasks: Dict[str, Task]
     teams: Dict[str, Team]
+    keyword_map: Dict[str, List[str]] = Field(
+        default_factory=dict,
+        description="Mapping of strategy names to additional keywords",
+    )
 
     model_config = {"extra": "forbid"}
 
