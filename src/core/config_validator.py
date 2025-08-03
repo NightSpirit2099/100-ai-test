@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import List
+from typing import Any
 
 from pydantic import ValidationError
-from pydantic_core import ErrorDetails
 
 from config_models import SystemConfig
 
@@ -16,7 +15,7 @@ class ConfigValidator:
 
     def validate(self) -> None:
         """Validate configuration, raising ValidationError on issues."""
-        errors: List[ErrorDetails] = []
+        errors: list[dict[str, Any]] = []
 
         for agent_name, agent in self._config.agents.items():
             if agent.llm not in self._config.llm_profiles:
