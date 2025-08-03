@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from pydantic import BaseModel, Field
 
@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 class LLMProfile(BaseModel):
     provider: str = Field(..., description="LLM service provider identifier")
     model: str = Field(..., description="Model name or identifier")
-    temperature: Optional[float] = Field(
+    temperature: float = Field(
         0.0, ge=0.0, le=1.0, description="Sampling temperature for the model"
     )
 
