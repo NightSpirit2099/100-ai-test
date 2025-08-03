@@ -19,4 +19,3 @@ def test_research_strategy_execute_returns_expected_response(
     assert isinstance(response, AgentResponse)
     assert response.text == "Researching: example research"
     assert "Executando ResearchStrategy" in caplog.text
-
