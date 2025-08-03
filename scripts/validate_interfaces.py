@@ -4,6 +4,8 @@ import logging
 import pkgutil
 import sys
 from pathlib import Path
+from types import ModuleType
+from typing import Iterator
 
 logging.basicConfig(
     level=logging.INFO,
@@ -13,7 +15,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def _iter_strategy_modules():
+def _iter_strategy_modules() -> Iterator[ModuleType]:
     package_dir = Path(__file__).resolve().parent.parent / "src" / "strategies"
     for module_info in pkgutil.iter_modules([str(package_dir)]):
         if module_info.name.startswith("_"):

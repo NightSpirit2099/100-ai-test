@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import yaml
 
 from config_models import SystemConfig
 
 
-def test_system_config_round_trip(tmp_path) -> None:
+def test_system_config_round_trip(tmp_path: Path) -> None:
     with open("system_config.yaml", "r", encoding="utf-8") as fh:
         original_data = yaml.safe_load(fh)
     original_config = SystemConfig.from_dict(original_data)
