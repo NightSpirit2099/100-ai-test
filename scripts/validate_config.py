@@ -1,11 +1,9 @@
 import logging
 import sys
+from pathlib import Path
 
 import yaml
 from pydantic import ValidationError
-
-from config_models import SystemConfig
-from src.core.config_validator import ConfigValidator
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,6 +14,12 @@ logger = logging.getLogger(__name__)
 
 
 def main(path: str) -> int:
+    root = Path(__file__).resolve().parent.parent
+    if str(root) not in sys.path:
+        sys.path.append(str(root))
+    from config_models import SystemConfig
+    from src.core.config_validator import ConfigValidator
+
     logger.info("Validando arquivo de configuração: %s", path)
 
     try:
@@ -50,6 +54,8 @@ def main(path: str) -> int:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        logger.error("Uso: python validate_config.py <caminho_para_config.yaml>")
+        logger.error(
+            "Uso: python scripts/validate_config.py <caminho_para_config.yaml>"
+        )
         sys.exit(1)
     sys.exit(main(sys.argv[1]))
