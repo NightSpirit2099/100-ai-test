@@ -12,4 +12,3 @@ def test_user_request_rejects_extra_fields() -> None:
 def test_agent_response_rejects_extra_fields() -> None:
     with pytest.raises(ValidationError):
         AgentResponse(text="hi", extra="value")  # type: ignore[call-arg]
-
