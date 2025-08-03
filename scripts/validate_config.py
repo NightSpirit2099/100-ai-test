@@ -5,10 +5,6 @@ from pathlib import Path
 import yaml
 from pydantic import ValidationError
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-from config_models import SystemConfig
-from src.core.config_validator import ConfigValidator
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s: %(message)s",
@@ -18,6 +14,12 @@ logger = logging.getLogger(__name__)
 
 
 def main(path: str) -> int:
+    root = Path(__file__).resolve().parent.parent
+    if str(root) not in sys.path:
+        sys.path.append(str(root))
+    from config_models import SystemConfig
+    from src.core.config_validator import ConfigValidator
+
     logger.info("Validando arquivo de configuração: %s", path)
 
     try:

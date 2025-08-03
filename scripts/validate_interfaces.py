@@ -5,10 +5,6 @@ import pkgutil
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))
-
-from src.core.interfaces import IExecutionStrategy
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s: %(message)s",
@@ -31,6 +27,11 @@ def _is_concrete(cls: type) -> bool:
 
 
 def main() -> int:
+    root = Path(__file__).resolve().parent.parent
+    if str(root) not in sys.path:
+        sys.path.append(str(root))
+    from src.core.interfaces import IExecutionStrategy
+
     expected_sig = inspect.signature(IExecutionStrategy.execute)
     try:
         for module in _iter_strategy_modules():

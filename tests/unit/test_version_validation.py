@@ -30,7 +30,9 @@ def test_system_config_rejects_invalid_version() -> None:
         SystemConfig.from_dict(data)
 
 
-def test_validate_config_reports_invalid_version(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+def test_validate_config_reports_invalid_version(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
     data = _load_base_config()
     data["version"] = "2"
     cfg_path = tmp_path / "config.yaml"
