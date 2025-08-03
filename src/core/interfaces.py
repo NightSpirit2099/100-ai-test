@@ -8,11 +8,15 @@ class UserRequest(BaseModel):
 
     text: str
 
+    model_config = {"extra": "forbid"}
+
 
 class AgentResponse(BaseModel):
     """Representa a resposta gerada por um agente."""
 
     text: str
+
+    model_config = {"extra": "forbid"}
 
 
 class IExecutionStrategy(Protocol):
