@@ -5,7 +5,7 @@ import yaml
 from pydantic import ValidationError
 
 from config_models import SystemConfig
-from src.core.config_validator import ConfigValidator
+from personal_agent.core.config_validator import ConfigValidator
 
 
 def load_config(path: str) -> SystemConfig:

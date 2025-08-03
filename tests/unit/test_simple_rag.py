@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import pytest
 
-from src.memory.simple_rag import SimpleRAG
+from personal_agent.memory.simple_rag import SimpleRAG
 
 
 def test_add_documents_stores_texts(caplog: pytest.LogCaptureFixture) -> None:

@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 import pytest
 
-from src.core.interfaces import AgentResponse, UserRequest
-from src.strategies.research_strategy import ResearchStrategy
+from personal_agent.core.interfaces import AgentResponse, UserRequest
+from personal_agent.strategies.research_strategy import ResearchStrategy
 
 
 def test_research_strategy_execute_returns_expected_response(

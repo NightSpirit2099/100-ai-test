@@ -17,11 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 def _iter_strategy_modules() -> Iterator[ModuleType]:
-    package_dir = Path(__file__).resolve().parent.parent / "src" / "strategies"
+    package_dir = Path(__file__).resolve().parent.parent / "src" / "personal_agent" / "strategies"
     for module_info in pkgutil.iter_modules([str(package_dir)]):
         if module_info.name.startswith("_"):
             continue
-        module_name = f"src.strategies.{module_info.name}"
+        module_name = f"personal_agent.strategies.{module_info.name}"
         yield importlib.import_module(module_name)
 
 
@@ -33,7 +33,7 @@ def main() -> int:
     root = Path(__file__).resolve().parent.parent
     if str(root) not in sys.path:
         sys.path.append(str(root))
-    from src.core.interfaces import IExecutionStrategy
+    from personal_agent.core.interfaces import IExecutionStrategy
 
     expected_sig = inspect.signature(IExecutionStrategy.execute)
     try:

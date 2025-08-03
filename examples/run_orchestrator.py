@@ -12,9 +12,9 @@ from typing import Any
 import yaml
 
 from config_models import SystemConfig
-from src.core.config_validator import ConfigValidator
-from src.core.interfaces import UserRequest
-from src.core.meta_orchestrator import MetaOrchestrator
+from personal_agent.core.config_validator import ConfigValidator
+from personal_agent.core.interfaces import UserRequest
+from personal_agent.core.meta_orchestrator import MetaOrchestrator
 
 
 def load_config(path: str) -> SystemConfig:

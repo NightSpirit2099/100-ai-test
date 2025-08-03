@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 import pytest
 
-from src.core.interfaces import AgentResponse, UserRequest
-from src.strategies.basic_strategy import BasicStrategy
+from personal_agent.core.interfaces import AgentResponse, UserRequest
+from personal_agent.strategies.basic_strategy import BasicStrategy
 
 
 def test_basic_strategy_execute_returns_expected_response(caplog: pytest.LogCaptureFixture) -> None:
