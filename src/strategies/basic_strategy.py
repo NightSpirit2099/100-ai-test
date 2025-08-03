@@ -1,3 +1,5 @@
+"""Estratégias básicas de execução."""
+
 import logging
 
 from ..core.interfaces import AgentResponse, IExecutionStrategy, UserRequest
@@ -12,7 +14,14 @@ class BasicStrategy:
     """
 
     def execute(self, request: UserRequest) -> AgentResponse:
-        """Executa a estratégia retornando uma resposta padrão."""
+        """Executa a estratégia retornando uma resposta padrão.
+
+        Args:
+            request: Requisição do usuário que será processada.
+
+        Returns:
+            Resposta gerada contendo o texto processado.
+        """
         logger.info("Executando BasicStrategy")
         return AgentResponse(text=f"Processed: {request.text}")
 
