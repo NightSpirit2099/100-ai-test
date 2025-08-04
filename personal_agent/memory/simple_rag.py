@@ -1,49 +1,44 @@
-"""
-Stub module for a simple Retrieval-Augmented Generation (RAG) system.
-
-This module defines the minimal interface for future memory integration.
-It exposes the SimpleRAG class, an in-memory placeholder that stores documents
-and returns basic matches for a query. Initial versions use ChromaDB for vector
-storage and retrieval, with plans to incorporate Neo4j for graph-based
-relationships in later iterations.
-"""
+"""Simple RAG implementation backed by a persistent ChromaDB collection."""
 
 from __future__ import annotations
 
 import logging
-import string
 import uuid
-from collections import Counter
-from typing import List
+from typing import List, Sequence
+
 import chromadb
-from chromadb.api.models.Collection import Collection
-import numpy as np
+from chromadb.utils.embedding_functions import EmbeddingFunction
+from sentence_transformers import SentenceTransformer
+
 logger = logging.getLogger(__name__)
 
 
-class _InMemoryCollection:
-    """Placeholder vector store used only for testing."""
+class _SentenceTransformerEmbedding(EmbeddingFunction):
+    """Embedding function using a shared SentenceTransformer model."""
 
-    def __init__(self, store: List[str]) -> None:
-        self._store = store
+    def __init__(self, model: SentenceTransformer) -> None:
+        self._model = model
 
-    def add(self, documents: List[str], embeddings: np.ndarray, ids: List[str]) -> None:
-        # embeddings and ids are currently unused but kept for API compatibility
-        del embeddings, ids
-        self._store.extend(documents)
+    def __call__(self, texts: Sequence[str]) -> List[List[float]]:  # type: ignore[override]
+        return self._model.encode(list(texts)).tolist()
 
 
 class SimpleRAG:
     """ChromaDB-backed RAG implementation."""
 
-    def __init__(self) -> None:
-        """Initialize the RAG system."""
-        self._client = chromadb.EphemeralClient()
-        collection_name = f"documents_{uuid.uuid4().hex}"
-        self._collection: Collection = self._client.create_collection(collection_name)
-        self._docs: List[str] = []
-        self._collection = _InMemoryCollection(self._docs)
-        logger.debug("SimpleRAG initialized")
+    def __init__(self, persist_directory: str = ".chromadb") -> None:
+        """Initialize the RAG system.
+
+        Args:
+            persist_directory: Directory used by ChromaDB to persist data.
+        """
+        self._model = SentenceTransformer("all-MiniLM-L6-v2")
+        self._client = chromadb.PersistentClient(path=persist_directory)
+        embedding_fn = _SentenceTransformerEmbedding(self._model)
+        self._collection = self._client.get_or_create_collection(
+            name="simple_rag", embedding_function=embedding_fn
+        )
+        logger.debug("SimpleRAG initialized at %s", persist_directory)
 
     def _embed_texts(self, texts: List[str]) -> List[List[float]]:
         """Generate embeddings for a batch of texts.
@@ -68,10 +63,9 @@ class SimpleRAG:
         Args:
             texts: Raw text documents to embed and persist.
         """
-        embeddings = self._embed_texts(texts)
+        embeddings = self._model.encode(texts).tolist()
         ids = [str(uuid.uuid4()) for _ in texts]
         self._collection.add(documents=texts, embeddings=embeddings, ids=ids)
-        self._docs.extend(texts)
 
         logger.info("Added %d documents", len(texts))
 
@@ -83,18 +77,9 @@ class SimpleRAG:
             top_k: Number of results to return.
 
         Returns:
-            List of document snippets ranked by vector similarity.
+            List of document snippets ranked by similarity.
         """
-        embedding = np.array(self._embed_texts([question])[0])
-        stored = self._collection.get(include=["documents", "embeddings"])
-        docs = stored.get("documents", [])
-        embs = np.array(stored.get("embeddings", []))
-        if len(embs) == 0:
-            return []
-        norms = np.linalg.norm(embs, axis=1) * np.linalg.norm(embedding)
-        # Avoid division by zero
-        norms[norms == 0] = 1e-10
-        scores = np.dot(embs, embedding) / norms
-        ranked = np.argsort(scores)[::-1][:top_k]
-        return [docs[i] for i in ranked]
-      
+        result = self._collection.query(query_texts=[question], n_results=top_k)
+        documents = result.get("documents", [[]])[0]
+        logger.debug("Query for '%s' returned %d documents", question, len(documents))
+        return documents
