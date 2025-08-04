@@ -109,27 +109,40 @@ Um assistente pessoal baseado em IA que atua como uma equipe de agentes especial
 
 ## 📊 ESTADO ATUAL DO PROJETO
 
+*Atualizado em 2025-08-04*
+
 ### ✅ Implementado
 
-```
-Estrutura Base:
-- src/core/ - Meta-Orquestrador com suporte a múltiplas estratégias (BasicStrategy e ResearchStrategy)
-- src/strategies/ - Implementações de BasicStrategy e ResearchStrategy
-- system_config.yaml - Template de configuração
-- requirements.txt - Dependências base
-- CI/CD pipeline - Validação automática
-```
+**Estrutura Base**
+- `personal_agent/core/` – Interfaces, Meta-Orquestrador e validador de configuração
+- `personal_agent/strategies/` – Estratégias de execução (BasicStrategy, ResearchStrategy)
+- `personal_agent/memory/` – Stub de memória RAG (`SimpleRAG`)
+- `system_config.yaml` – Template de configuração
+- `requirements.txt` – Dependências base
+- CI/CD pipeline – Validação automática
+
+**Estratégias**
+- `BasicStrategy` (`personal_agent/strategies/basic_strategy.py`)
+- `ResearchStrategy` (`personal_agent/strategies/research_strategy.py`)
+
+**Modelos**
+- `UserRequest` e `AgentResponse` (`personal_agent/core/interfaces.py`)
+- `SystemConfig` (`config_models.py`)
+
+**Scripts**
+- `scripts/validate_config.py` – Validação de arquivos YAML
+- `scripts/validate_interfaces.py` – Verificação das estratégias
 
 ### 🔄 Em Desenvolvimento
 
 ```
 Meta-Orquestrador Core:
 - Status: Suporte inicial a múltiplas estratégias concluído
-- Arquivo: src/core/meta_orchestrator.py
+- Arquivo: personal_agent/core/meta_orchestrator.py
 - Próximo: aprimorar heurística de análise e incluir novas estratégias
 
 Sistema de Memória (RAG):
-- Status: Stub inicial definido
+- Status: Stub inicial definido (SimpleRAG)
 - Pendente: Pipeline de ingestão e integração com ChromaDB
 ```
 
@@ -138,10 +151,9 @@ Sistema de Memória (RAG):
 ```
 [Prioridade ordenada]
 
-1. Telegram Adapter (src/adapters/telegram_adapter.py)
-2. ArchivistAgent MVP (src/agents/archivist_agent.py)
-3. CrewAI Strategy (src/strategies/crewai_strategy.py)
-4. System Config Validator (src/core/config_validator.py)
+1. Telegram Adapter (personal_agent/adapters/telegram_adapter.py)
+2. ArchivistAgent MVP (personal_agent/agents/archivist_agent.py)
+3. CrewAI Strategy (personal_agent/strategies/crewai_strategy.py)
 ```
 
 -----
@@ -589,12 +601,12 @@ class NovaStrategy(IExecutionStrategy):
   O script escreve no console `INFO: Configuração validada com sucesso.` quando
   tudo estiver correto ou `ERROR: ...` detalhando qualquer problema.
 - `scripts/validate_interfaces.py` - Verifica se todas as classes em
-  `src/strategies` implementam `IExecutionStrategy`.
+  `personal_agent/strategies` implementam `IExecutionStrategy`.
 - `python -m pytest` - Execução de testes
 
 -----
 
-**Última Atualização**: 2025-08-03
+**Última Atualização**: 2025-08-04
 **Próxima Revisão**: [Após cada implementação significativa]
 
 -----

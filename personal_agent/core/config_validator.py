@@ -1,3 +1,9 @@
+"""Validador de integridade para instâncias de ``SystemConfig``.
+
+Este módulo assegura que seções como ``agents``, ``tasks`` e ``teams`` não
+possuam entradas duplicadas e que suas referências cruzadas sejam válidas.
+"""
+
 from __future__ import annotations
 
 from typing import Any, cast
