@@ -7,14 +7,14 @@ import pytest
 
 
 MODULES: List[str] = [
-    "src",
-    "src.core",
-    "src.agents",
-    "src.strategies",
-    "src.tools",
-    "src.memory",
-    "src.utils",
-    "src.adapters",
+    "personal_agent",
+    "personal_agent.core",
+    "personal_agent.agents",
+    "personal_agent.strategies",
+    "personal_agent.tools",
+    "personal_agent.memory",
+    "personal_agent.utils",
+    "personal_agent.adapters",
 ]
 
 

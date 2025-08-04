@@ -18,7 +18,7 @@ def main(path: str) -> int:
     if str(root) not in sys.path:
         sys.path.append(str(root))
     from config_models import SystemConfig
-    from src.core.config_validator import ConfigValidator
+    from personal_agent.core.config_validator import ConfigValidator
 
     logger.info("Validando arquivo de configuração: %s", path)
 
