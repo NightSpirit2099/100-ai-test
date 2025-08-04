@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from src.core.interfaces import AgentResponse, UserRequest
+from personal_agent.core.interfaces import AgentResponse, UserRequest
 
 
 def test_user_request_rejects_extra_fields() -> None:

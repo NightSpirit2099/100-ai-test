@@ -1,10 +1,14 @@
 import logging
 import pytest
 
-from src.core.interfaces import AgentResponse, IExecutionStrategy, UserRequest
-from src.core.meta_orchestrator import MetaOrchestrator
-from src.strategies.basic_strategy import BasicStrategy
-from src.strategies.research_strategy import ResearchStrategy
+from personal_agent.core.interfaces import (
+    AgentResponse,
+    IExecutionStrategy,
+    UserRequest,
+)
+from personal_agent.core.meta_orchestrator import MetaOrchestrator
+from personal_agent.strategies.basic_strategy import BasicStrategy
+from personal_agent.strategies.research_strategy import ResearchStrategy
 
 
 def test_meta_orchestrator_basic_strategy() -> None:
