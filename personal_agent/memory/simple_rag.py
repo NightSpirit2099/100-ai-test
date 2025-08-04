@@ -15,12 +15,22 @@ import string
 import uuid
 from collections import Counter
 from typing import List
-
 import chromadb
 from chromadb.api.models.Collection import Collection
 import numpy as np
-
 logger = logging.getLogger(__name__)
+
+
+class _InMemoryCollection:
+    """Placeholder vector store used only for testing."""
+
+    def __init__(self, store: List[str]) -> None:
+        self._store = store
+
+    def add(self, documents: List[str], embeddings: np.ndarray, ids: List[str]) -> None:
+        # embeddings and ids are currently unused but kept for API compatibility
+        del embeddings, ids
+        self._store.extend(documents)
 
 
 class SimpleRAG:
@@ -32,6 +42,7 @@ class SimpleRAG:
         collection_name = f"documents_{uuid.uuid4().hex}"
         self._collection: Collection = self._client.create_collection(collection_name)
         self._docs: List[str] = []
+        self._collection = _InMemoryCollection(self._docs)
         logger.debug("SimpleRAG initialized")
 
     def _embed_texts(self, texts: List[str]) -> List[List[float]]:
@@ -61,6 +72,7 @@ class SimpleRAG:
         ids = [str(uuid.uuid4()) for _ in texts]
         self._collection.add(documents=texts, embeddings=embeddings, ids=ids)
         self._docs.extend(texts)
+
         logger.info("Added %d documents", len(texts))
 
     def query(self, question: str, top_k: int = 5) -> List[str]:
@@ -85,3 +97,4 @@ class SimpleRAG:
         scores = np.dot(embs, embedding) / norms
         ranked = np.argsort(scores)[::-1][:top_k]
         return [docs[i] for i in ranked]
+      
