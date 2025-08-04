@@ -15,9 +15,11 @@ import string
 import uuid
 from collections import Counter
 from typing import List
+
 import chromadb
 from chromadb.api.models.Collection import Collection
 import numpy as np
+
 logger = logging.getLogger(__name__)
 
 
@@ -97,4 +99,3 @@ class SimpleRAG:
         scores = np.dot(embs, embedding) / norms
         ranked = np.argsort(scores)[::-1][:top_k]
         return [docs[i] for i in ranked]
-      
