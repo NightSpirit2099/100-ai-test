@@ -16,6 +16,7 @@ def test_add_documents_stores_texts(caplog: pytest.LogCaptureFixture) -> None:
     assert rag._docs == texts
     assert "Added 2 documents" in caplog.text
 
+
 def test_query_returns_semantic_matches() -> None:
     rag = SimpleRAG()
     rag.add_documents([
