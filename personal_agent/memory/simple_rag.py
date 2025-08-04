@@ -40,6 +40,23 @@ class SimpleRAG:
         )
         logger.debug("SimpleRAG initialized at %s", persist_directory)
 
+    def _embed_texts(self, texts: List[str]) -> List[List[float]]:
+        """Generate embeddings for a batch of texts.
+
+        Args:
+            texts: Documents or queries to embed.
+
+        Returns:
+            List of vector embeddings.
+        """
+        alphabet = string.ascii_lowercase
+
+        def embed(text: str) -> List[float]:
+            counts = Counter(c for c in text.lower() if c in alphabet)
+            return [float(counts.get(ch, 0)) for ch in alphabet]
+
+        return [embed(t) for t in texts]
+
     def add_documents(self, texts: List[str]) -> None:
         """Ingest a batch of documents into the memory store.
 
@@ -49,6 +66,7 @@ class SimpleRAG:
         embeddings = self._model.encode(texts).tolist()
         ids = [str(uuid.uuid4()) for _ in texts]
         self._collection.add(documents=texts, embeddings=embeddings, ids=ids)
+
         logger.info("Added %d documents", len(texts))
 
     def query(self, question: str, top_k: int = 5) -> List[str]:
