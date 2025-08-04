@@ -1,11 +1,6 @@
-"""Root package for the personal AI agent system."""
+"""Compatibility layer exposing the project as the legacy 'src' package."""
+from importlib import import_module as _import_module
+import sys as _sys
 
-__all__ = [
-    "core",
-    "agents",
-    "strategies",
-    "memory",
-    "tools",
-    "utils",
-    "adapters",
-]
+_pkg = _import_module("personal_agent")
+_sys.modules[__name__] = _pkg
