@@ -58,5 +58,7 @@ class SimpleRAG:
             List of document snippets containing the query.
         """
         lowered = question.lower()
-        matches = [doc for doc in self._docs if lowered in doc.lower()]
-        return matches[:top_k]
+        stored = {"documents": self._docs}
+        docs = stored.get("documents") or []
+        indices = [i for i, doc in enumerate(docs) if lowered in doc.lower()]
+        return [docs[i] for i in indices[:top_k]]
