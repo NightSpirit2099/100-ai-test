@@ -111,38 +111,17 @@ Um assistente pessoal baseado em IA que atua como uma equipe de agentes especial
 
 ### ✅ Implementado
 
-```
-Estrutura Base:
-- src/core/ - Meta-Orquestrador com suporte a múltiplas estratégias (BasicStrategy e ResearchStrategy)
-- src/strategies/ - Implementações de BasicStrategy e ResearchStrategy
-- system_config.yaml - Template de configuração
-- requirements.txt - Dependências base
-- CI/CD pipeline - Validação automática
-```
+- MetaOrchestrator com suporte a múltiplas estratégias básicas
+- SimpleRAG para recuperação de contexto
+- Scripts de validação de configuração e interfaces
+- Conjunto inicial de testes automatizados
 
-### 🔄 Em Desenvolvimento
+### 🔜 Próximos Passos
 
-```
-Meta-Orquestrador Core:
-- Status: Suporte inicial a múltiplas estratégias concluído
-- Arquivo: src/core/meta_orchestrator.py
-- Próximo: aprimorar heurística de análise e incluir novas estratégias
-
-Sistema de Memória (RAG):
-- Status: Stub inicial definido
-- Pendente: Pipeline de ingestão e integração com ChromaDB
-```
-
-### ⏳ Próximo na Fila
-
-```
-[Prioridade ordenada]
-
-1. Telegram Adapter (src/adapters/telegram_adapter.py)
-2. ArchivistAgent MVP (src/agents/archivist_agent.py)
-3. CrewAI Strategy (src/strategies/crewai_strategy.py)
-4. System Config Validator (src/core/config_validator.py)
-```
+- Integrar Telegram Adapter para interface inicial
+- Desenvolver ArchivistAgent MVP
+- Adicionar estratégia CrewAI para orquestração multiagente
+- Criar ConfigValidator e pipeline de ingestão para RAG
 
 -----
 
@@ -594,7 +573,7 @@ class NovaStrategy(IExecutionStrategy):
 
 -----
 
-**Última Atualização**: 2025-08-03
+**Última Atualização**: 2025-08-04
 **Próxima Revisão**: [Após cada implementação significativa]
 
 -----
