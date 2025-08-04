@@ -1,20 +1,30 @@
-"""Orquestrador central que coordena múltiplas estratégias de execução."""
+"""Meta-orquestrador que direciona requisições para estratégias adequadas.
 
-import logging
+Ele escolhe entre ``BasicStrategy`` para interações diretas e
+``ResearchStrategy`` quando a solicitação exige um passo de investigação
+mais profundo.
+"""
+
 from typing import Dict
 
 from ..strategies.basic_strategy import BasicStrategy
 from ..strategies.research_strategy import ResearchStrategy
 from .interfaces import AgentResponse, IExecutionStrategy, UserRequest
+import logging
 
 logger = logging.getLogger(__name__)
 
 
 class MetaOrchestrator:
-    """Orquestrador que analisa requisições e delega entre múltiplas estratégias."""
+    """Analisa requisições e delega para ``BasicStrategy`` ou
+    ``ResearchStrategy`` conforme necessário."""
 
     def __init__(self) -> None:
-        """Inicializa o orquestrador registrando as estratégias disponíveis."""
+        """Inicializa o orquestrador registrando as estratégias disponíveis.
+
+        Inclui ``BasicStrategy`` para tarefas diretas e ``ResearchStrategy``
+        para solicitações que demandam pesquisa adicional.
+        """
         self.strategies: Dict[str, IExecutionStrategy] = {
             "basic": BasicStrategy(),
             "research": ResearchStrategy(),
@@ -23,9 +33,9 @@ class MetaOrchestrator:
     def analyze_request(self, request: UserRequest) -> str:
         """Analisa a requisição do usuário para determinar a estratégia.
 
-        A análise mínima identifica palavras-chave simples no texto da
-        requisição. Caso nenhuma palavra-chave seja encontrada, a estratégia
-        ``basic`` é utilizada como padrão.
+        A análise identifica palavras-chave simples no texto para decidir
+        entre ``ResearchStrategy`` ou ``BasicStrategy``. Se nenhuma palavra for
+        encontrada, ``BasicStrategy`` é utilizada como padrão.
 
         Args:
             request: Requisição enviada pelo usuário.
@@ -49,8 +59,8 @@ class MetaOrchestrator:
         Returns:
             Implementação de :class:`IExecutionStrategy` associada ao
             identificador. Se nenhuma estratégia corresponder ao
-            identificador informado, a estratégia ``basic`` é utilizada e um
-            aviso é registrado no log.
+            identificador informado, ``BasicStrategy`` é utilizada e um aviso
+            é registrado no log.
         """
         try:
             return self.strategies[analysis]
@@ -59,13 +69,14 @@ class MetaOrchestrator:
             return self.strategies["basic"]
 
     def execute(self, request: UserRequest) -> AgentResponse:
-        """Processa a requisição do usuário e retorna a resposta do agente.
+        """Processa a requisição e executa a estratégia selecionada.
 
         Args:
             request: Requisição do usuário a ser processada.
 
         Returns:
-            Resposta do agente gerada pela estratégia selecionada.
+            Resposta do agente gerada por ``BasicStrategy`` ou
+            ``ResearchStrategy`` conforme definido pela análise.
         """
         logger.info("Iniciando processamento da requisição do usuário")
 
