@@ -1,15 +1,15 @@
 # SimpleRAG Memory Module
 
-`SimpleRAG` fornece um armazenamento em memória para experimentos iniciais de Retrieval-Augmented Generation (RAG).
-Ele mantém uma lista de textos e realiza buscas por substring para recuperar documentos relevantes.
+`SimpleRAG` fornece um armazenamento persistente baseado em ChromaDB para experimentos de Retrieval-Augmented Generation (RAG).
+Ele utiliza um modelo da biblioteca [`sentence-transformers`](https://www.sbert.net) para gerar embeddings e realiza busca semântica sobre os documentos.
 
 ## Limitações Atuais
-- Todo o conteúdo é mantido apenas em memória; não há persistência em disco.
-- Busca ingênua por substring, sem embeddings ou ranking semântico.
-- Ausência de metadados, controle de concorrência ou otimizações para grandes volumes.
+- Ausência de metadados avançados ou controle de concorrência.
+- Dependência direta do ChromaDB para persistência.
+- Ausência de otimizações para grandes volumes de dados.
 
 ## Plano de Evolução
-1. **MVP:** conectar o módulo a um vector store simples (ChromaDB) para busca semântica.
+1. **Iteração atual:** utilizar ChromaDB para busca semântica com embeddings `all-MiniLM-L6-v2`.
 2. **Iteração 3:** migrar para uma memória híbrida Grafo-Vetor baseada em Neo4j, conforme descrito no [Plano de Arquitetura](../../Plano_de_arquitetura.md).
 3. Integrar um `ArchivistAgent` para gerenciar ingestão, versionamento e poda de documentos.
 
