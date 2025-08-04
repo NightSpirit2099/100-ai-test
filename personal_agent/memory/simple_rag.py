@@ -1,9 +1,11 @@
-"""Stub module for a simple Retrieval-Augmented Generation (RAG) system.
+"""
+Stub module for a simple Retrieval-Augmented Generation (RAG) system.
 
 This module defines the minimal interface for future memory integration.
-It will initially support ChromaDB for vector storage and retrieval, with
-plans to incorporate Neo4j for graph-based relationships in later
-iterations.
+It exposes the SimpleRAG class, an in-memory placeholder that stores documents
+and returns basic matches for a query. Initial versions use ChromaDB for vector
+storage and retrieval, with plans to incorporate Neo4j for graph-based
+relationships in later iterations.
 """
 
 from typing import List
