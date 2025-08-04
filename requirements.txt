@@ -1,3 +1,4 @@
 flake8
 pydantic>=2.0
 PyYAML
+chromadb
