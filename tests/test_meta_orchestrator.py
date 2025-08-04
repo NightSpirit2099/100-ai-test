@@ -9,6 +9,7 @@ from personal_agent.core.interfaces import (
 from personal_agent.core.meta_orchestrator import MetaOrchestrator
 from personal_agent.strategies.basic_strategy import BasicStrategy
 from personal_agent.strategies.research_strategy import ResearchStrategy
+from personal_agent.agents.archivist_agent import ArchivistAgent
 
 
 def test_meta_orchestrator_basic_strategy() -> None:
@@ -39,6 +40,21 @@ def test_meta_orchestrator_research_strategy() -> None:
     response = orchestrator.execute(request)
     assert isinstance(response, AgentResponse)
     assert "Researching" in response.text
+
+
+def test_meta_orchestrator_archivist_agent() -> None:
+    orchestrator = MetaOrchestrator()
+    request = UserRequest(text="please archive it")
+
+    analysis = orchestrator.analyze_request(request)
+    assert analysis == "archivist"
+
+    strategy = orchestrator.select_strategy(analysis)
+    assert isinstance(strategy, ArchivistAgent)
+
+    response = orchestrator.execute(request)
+    assert isinstance(response, AgentResponse)
+    assert "Archived" in response.text
 
 
 def test_select_strategy_unknown_returns_basic_and_logs_warning(
