@@ -8,11 +8,18 @@ agents:
   researcher:
     description: "General knowledge assistant"
     llm: default
+  archivist:
+    description: "Manages long-term memory and archives"
+    llm: default
 tasks:
   answer_question:
     description: "Answer user questions"
     agent: researcher
+  archive_content:
+    description: "Archive provided information"
+    agent: archivist
 teams:
   default:
     agents:
       - researcher
+      - archivist

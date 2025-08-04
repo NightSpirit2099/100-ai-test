@@ -1,12 +1,14 @@
 """Meta-orquestrador que direciona requisições para estratégias adequadas.
 
-Ele escolhe entre ``BasicStrategy`` para interações diretas e
+Ele escolhe entre ``BasicStrategy`` para interações diretas,
 ``ResearchStrategy`` quando a solicitação exige um passo de investigação
-mais profundo.
+mais profundo e ``ArchivistAgent`` para operações de arquivamento ou
+recuperação de memória.
 """
 
 from typing import Dict
 
+from ..agents.archivist_agent import ArchivistAgent
 from ..strategies.basic_strategy import BasicStrategy
 from ..strategies.research_strategy import ResearchStrategy
 from .interfaces import AgentResponse, IExecutionStrategy, UserRequest
@@ -16,26 +18,30 @@ logger = logging.getLogger(__name__)
 
 
 class MetaOrchestrator:
-    """Analisa requisições e delega para ``BasicStrategy`` ou
-    ``ResearchStrategy`` conforme necessário."""
+    """Analisa requisições e delega para ``BasicStrategy``,
+    ``ResearchStrategy`` ou ``ArchivistAgent`` conforme necessário."""
 
     def __init__(self) -> None:
         """Inicializa o orquestrador registrando as estratégias disponíveis.
 
-        Inclui ``BasicStrategy`` para tarefas diretas e ``ResearchStrategy``
-        para solicitações que demandam pesquisa adicional.
+        Inclui ``BasicStrategy`` para tarefas diretas,
+        ``ResearchStrategy`` para solicitações que demandam pesquisa
+        adicional e ``ArchivistAgent`` para requisições relacionadas a
+        arquivamento de informações.
         """
         self.strategies: Dict[str, IExecutionStrategy] = {
             "basic": BasicStrategy(),
             "research": ResearchStrategy(),
+            "archivist": ArchivistAgent(),
         }
 
     def analyze_request(self, request: UserRequest) -> str:
         """Analisa a requisição do usuário para determinar a estratégia.
 
         A análise identifica palavras-chave simples no texto para decidir
-        entre ``ResearchStrategy`` ou ``BasicStrategy``. Se nenhuma palavra for
-        encontrada, ``BasicStrategy`` é utilizada como padrão.
+        entre ``ResearchStrategy``, ``ArchivistAgent`` ou ``BasicStrategy``.
+        Se nenhuma palavra for encontrada, ``BasicStrategy`` é utilizada como
+        padrão.
 
         Args:
             request: Requisição enviada pelo usuário.
@@ -46,6 +52,8 @@ class MetaOrchestrator:
         text = request.text.lower()
         if any(keyword in text for keyword in ("research", "pesquisa")):
             return "research"
+        if any(keyword in text for keyword in ("archive", "arquivar", "memoria", "memory")):
+            return "archivist"
         if "basic" in text:
             return "basic"
         return "basic"
